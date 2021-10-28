@@ -1,0 +1,73 @@
+name: Docker Image CI
+
+on:
+  schedule:
+    - cron: '0 15 * * *'
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cache-alpine-3-14-1:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile.alpine-3.14.1-cache --tag ghcr.io/jgowdy/alpine-cache:3.14.1
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Publish the Docker image
+      run: docker push ghcr.io/jgowdy/alpine-cache:3.14.1
+  cache-alpine-3-14-2:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile.alpine-3.14.2-cache --tag ghcr.io/jgowdy/alpine-cache:3.14.2 --tag ghcr.io/jgowdy/alpine-cache:latest
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Publish the Docker image
+      run: docker push ghcr.io/jgowdy/alpine-cache:3.14.2
+    - name: Publish the Docker image
+      run: docker push ghcr.io/jgowdy/alpine-cache:latest
+  cache-golang-bullseye:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile.golang-bullseye-cache --tag ghcr.io/jgowdy/golang-bullseye-cache:latest
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Publish the Docker image
+      run: docker push ghcr.io/jgowdy/golang-bullseye-cache:latest
+  cache-rust-alpine:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile.rust-alpine-cache --tag ghcr.io/jgowdy/rust-alpine-cache:latest
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Publish the Docker image
+      run: docker push ghcr.io/jgowdy/rust-alpine-cache:latest
+  cache-rust-slim-bullseye:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile.rust-bullseye-cache --tag ghcr.io/jgowdy/rust-bullseye-cache:latest
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: Publish the Docker image
+      run: docker push ghcr.io/jgowdy/rust-slim-bullseye-cache:latest
